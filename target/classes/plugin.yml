@@ -1,0 +1,20 @@
+name: MyShopPlugin
+version: '1.0-SNAPSHOT'
+main: com.maks.myshopplugin.MyShopPlugin
+api-version: '1.20'
+commands:
+  shop:
+    description: Opens the shop GUI for selling items.
+    usage: /shop
+    permission: shopplugin.use
+  checklore:
+    description: Displays the lore of the item in hand.
+    usage: /checklore
+    permission: shopplugin.checklore
+permissions:
+  shopplugin.use:
+    description: Allows the player to use the /shop command.
+    default: true
+  shopplugin.checklore:
+    description: Allows the player to use the /checklore command.
+    default: true

@@ -1,0 +1,10 @@
+rarity_values:
+  Normal: 100
+  Improved: 500
+  Magic: 1000
+  Extraordinary: 2500
+  Legendary: 5000
+  Unique: 10000
+  MYTHIC: 20000
+
+level_multiplier: 500
