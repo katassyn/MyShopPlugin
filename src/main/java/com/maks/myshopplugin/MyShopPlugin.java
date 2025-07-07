@@ -18,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class MyShopPlugin extends JavaPlugin implements Listener {
 
@@ -306,10 +308,45 @@ public class MyShopPlugin extends JavaPlugin implements Listener {
         }
 
         if (totalValue > 0) {
-            econ.depositPlayer(player, totalValue);
-            player.sendMessage(ChatColor.GREEN + "You received $" + totalValue + " for sold items.");
+            // Sprawdź czy jest dostępne API TrinketsPlugin
+            double sellMultiplier = 1.0;
+
+            try {
+                // Próba użycia JewelAPI
+                Class<?> jewelAPIClass = Class.forName("com.maks.trinketsplugin.JewelAPI");
+                Method getSellBonusMethod = jewelAPIClass.getMethod("getSellBonus", Player.class);
+                Object result = getSellBonusMethod.invoke(null, player);
+                if (result instanceof Double) {
+                    sellMultiplier = (Double) result;
+                    if (DEBUG) {
+                        getLogger().info("Applied sell bonus from Steam Sale Jewel: " + sellMultiplier);
+                    }
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                // API Niedostępne, używamy domyślnego mnożnika 1.0
+                if (DEBUG) {
+                    getLogger().warning("TrinketsPlugin JewelAPI not available: " + e.getMessage());
+                }
+            }
+
+            // Zastosuj mnożnik do totalValue
+            int finalValue = (int) (totalValue * sellMultiplier);
+
+            if (sellMultiplier > 1.0 && DEBUG) {
+                getLogger().info("Increased sale value from " + totalValue + " to " + finalValue + 
+                        " due to Steam Sale Jewel");
+            }
+
+            econ.depositPlayer(player, finalValue);
+            player.sendMessage(ChatColor.GREEN + "You received $" + finalValue + " for sold items.");
+
+            if (sellMultiplier > 1.0) {
+                player.sendMessage(ChatColor.GOLD + "Your Merchant Jewel gave you a " + 
+                        (int)((sellMultiplier - 1.0) * 100) + "% bonus!");
+            }
+
             if (DEBUG)
-                getLogger().info("processSale: Total sale value: " + totalValue);
+                getLogger().info("processSale: Total sale value: " + finalValue);
         } else {
             player.sendMessage(ChatColor.RED + "No sellable items were found.");
             if (DEBUG)
