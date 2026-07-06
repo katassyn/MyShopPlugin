@@ -4,9 +4,13 @@ main: com.maks.myshopplugin.MyShopPlugin
 api-version: '1.20'
 commands:
   shop:
-    description: Opens the shop GUI for selling items.
+    description: Opens the main shop GUI with service options.
     usage: /shop
     permission: shopplugin.use
+  smelter:
+    description: Opens the item smelter GUI.
+    usage: /smelter
+    permission: shopplugin.smelter
   checklore:
     description: Displays the lore of the item in hand.
     usage: /checklore
